@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "30342691479",
+    "project_id": "shakti-fce9f",
+    "storage_bucket": "shakti-fce9f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:30342691479:android:ee6444c5a62cc2026387d2",
+        "android_client_info": {
+          "package_name": "com.ganeshamastery.shakti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "30342691479-7lnvoqcqrkv8nbmkp2hal5ee31qfp0sn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ganeshamastery.shakti",
+            "certificate_hash": "1d74053dab41946e7ae5b0c761c191bfffb0e22f"
+          }
+        },
+        {
+          "client_id": "30342691479-s4m0nberltgkcd88vgbubadu75q35nmm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs_lIfNoBVhtTGiIwOKXx7LEyrdxI3jVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "30342691479-s4m0nberltgkcd88vgbubadu75q35nmm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "30342691479-rouoeovsg36ls20g97gn7oie1abuu8us.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ganeshamastery.shakti"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
