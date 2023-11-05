@@ -32,6 +32,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// TESTING Commiting info in IDE. Because some plugings made problems
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
