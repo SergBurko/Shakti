@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "30342691479-7lnvoqcqrkv8nbmkp2hal5ee31qfp0sn.apps.googleusercontent.com",
+          "client_id": "30342691479-o9rum1hkkdu0omer6cr184h76prhp43s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.ganeshamastery.shakti",
-            "certificate_hash": "1d74053dab41946e7ae5b0c761c191bfffb0e22f"
+            "certificate_hash": "e2e7ac591dc6304da1c7b38ecf8c964a45222979"
           }
         },
         {

@@ -214,12 +214,13 @@ class _LoginScreenEmailState extends State<LoginScreenEmail> {
               onPressed: () {
                 sessionSettings.changeLoginState();
               },
+              
               child: Text(
-                "----  ${sessionSettings.loginScreenSettings.loginState == LoginStatesEnum.login ? Singleton.register : Singleton.login}  ----",
+                "${Singleton.iNeedTo} ${sessionSettings.loginScreenSettings.loginState == LoginStatesEnum.login ? Singleton.register.toString().toLowerCase() : Singleton.login.toString().toLowerCase()}",
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
-                    ?.copyWith(decoration: TextDecoration.underline),
+                    ?.copyWith(decoration: TextDecoration.underline, fontSize: 16),
               ),
             ),
           ],

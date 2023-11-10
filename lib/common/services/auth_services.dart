@@ -23,7 +23,10 @@ class AuthServices extends ChangeNotifier {
 
   signInWithGoogle() async {
     try {
+      var a = FirebaseAuth.instance;
       _googleSignInAccount = await _googleSignIn.signIn();
+
+
 
       GoogleSignInAuthentication? googleAuth =
           await _googleSignInAccount?.authentication;
@@ -32,8 +35,28 @@ class AuthServices extends ChangeNotifier {
           accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
 
       // UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(authCredentials);
+      UserCredential userCredential =  await FirebaseAuth.instance.signInWithCredential(authCredentials);
 
+      User? user = userCredential.user;
+
+      if (user != null && user.uid.isNotEmpty) {
+
+        // List<UserInfo> providerData = user.providerData;
+
+        // for (UserInfo userInfo in providerData) {
+        //   print('Provider ID: ${userInfo.providerId}');
+        //   // google.com - gmail
+        //   // password - email  
+        //   //        
+        // }
+
+        sessionSettings.getClientByFirebaseUserId(user.uid);
+        if (sessionSettings.client.id.trim().isEmpty){
+          sessionSettings.client.id = user.uid;
+          sessionSettings.client.email = user.email!;
+          sessionSettings.clientAddOrUpdateThisInDB();
+        }
+      }
       // return userCredential;
     } catch (e) {
       print("ERROR: $e");
@@ -49,6 +72,7 @@ class AuthServices extends ChangeNotifier {
       if (user != null && user.uid.isNotEmpty) {
         sessionSettings.getClientByFirebaseUserId(user.uid);
       }
+      
     } catch (e) {
       print(e);
     }
@@ -65,7 +89,7 @@ class AuthServices extends ChangeNotifier {
         sessionSettings.client.id = user.uid;
         sessionSettings.client.email = user.email!;
 
-        sessionSettings.addOrUpdateThisInDB();
+        sessionSettings.clientAddOrUpdateThisInDB();
       }
       FirebaseAuth.instance.signOut();
     } catch (e) {

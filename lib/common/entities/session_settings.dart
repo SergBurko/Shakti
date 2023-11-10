@@ -20,8 +20,9 @@ class SessionSettings extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addOrUpdateThisInDB() {
+  void clientAddOrUpdateThisInDB() {
     client.addOrUpdateThisInDB();
     notifyListeners();
   }
+
 }

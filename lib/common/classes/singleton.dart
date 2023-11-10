@@ -61,4 +61,6 @@ class Singleton {
   static String tooWeakPassword = "You should set more strong password";
   static String notCorrectEnteredEmailOrPassword = "Not correnct entered email or password";
   static String thisEmailAlreadyRegistered = "This email already registered!";
+  static String or = "or";
+  static String iNeedTo = "I need to";
 }
