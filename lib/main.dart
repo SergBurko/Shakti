@@ -1,14 +1,42 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_loadingindicator/flutter_loadingindicator.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+// import 'package:firebase_app_check/firebase_app_check.dart';
+
+import 'package:provider/provider.dart';
+import 'package:shakti/common/classes/dialogs.dart';
+import 'package:shakti/common/classes/singleton.dart';
+import 'package:shakti/common/entities/session_settings.dart';
+import 'package:shakti/widgets/login_screen/login_screen.dart';
+import 'package:shakti/widgets/start_screen/start_screen.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseAppCheck.instance
+      .activate(
+        // webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+        androidProvider: AndroidProvider.playIntegrity
+        // appleProvider: AppleProvider.appAttest,
+        );
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SessionSettings>(
+          create: (context) => SessionSettings(),
+        ),
+        // Другие провайдеры, если необходимо
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,98 +46,81 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        textTheme: TextTheme(
-          displayMedium: GoogleFonts.pacifico(fontSize: 20),
-          bodyMedium: GoogleFonts.dancingScript(fontSize: 20),
-        ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Shakti',
+      theme: Singleton.themeData,
+      home: const MyHomePage(),
+      builder: EasyLoading.init(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  @override
+  Widget build(BuildContext context) {
+    return Builder(builder: (context) {
+      return FutureBuilder(
+        future: _checkConnectivity(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SpinKitSpinningLines(
+              color: Theme.of(context).dividerColor,
+            );
+          } else if (snapshot.hasError) {
+            return Dialogs.showMessage(context, Singleton.connectionError);
+          } else {
+            return _buildContent(context, snapshot.data);
+          }
+        },
+      );
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Container(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
-          child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            //
-            // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-            // action in the IDE, or press "p" in the console), to see the
-            // wireframe for each widget.
-            mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'You have pushed the button this many times:',
-              ),
-              Center(
-                child: AutoSizeText(
-                  minFontSize: 10,
-                  maxLines: 3,
-                  '$_counter',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+  Widget _buildContent(BuildContext context, bool? isConnected) {
+    if (isConnected == null || !isConnected) {
+      return Dialogs.showMessage(context, Singleton.noInternetConnectionText);
+    }
+
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Dialogs.showMessage(context, Singleton.connectionError);
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SpinKitSpinningLines(
+            color: Theme.of(context).dividerColor,
+          );
+        }
+        if (snapshot.data != null && snapshot.data!.emailVerified) {
+          _navigateToScreen(context, const StartScreen());
+        } else {
+          _navigateToScreen(context, const LoginScreen());
+        }
+        return Container(); // Заглушка, так как _navigateToScreen осуществляет навигацию
+      },
     );
+  }
+
+  void _navigateToScreen(BuildContext context, Widget screen) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+    });
+  }
+
+  Future<bool> _checkConnectivity() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

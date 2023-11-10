@@ -82,6 +82,10 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.3.1')
     // implementation 'com.google.firebase:firebase-analytics'
     // implementation("com.google.firebase:firebase-auth-ktx")
+    //21:93:c4:ad:4b:0e:fd:e0:31:a0:d1:ed:3e:21:f8:ca:a3:02:58:ee:80:a0:66:42:62:4d:1b:90:4e:5d:63:ca
+
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+
     implementation 'com.android.support:multidex:1.0.3'
     // // Also add the dependency for the Google Play services library and specify its version
     // implementation("com.google.android.gms:play-services-auth:20.7.0")

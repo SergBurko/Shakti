@@ -1,0 +1,1 @@
+enum LoginStatesEnum { login, registration }

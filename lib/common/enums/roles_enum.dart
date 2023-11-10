@@ -1,0 +1,1 @@
+enum RolesEnum { client, manager, employee, owner }
